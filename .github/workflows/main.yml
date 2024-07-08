@@ -1,0 +1,47 @@
+name: Medium Data Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pandas medium-api
+
+    - name: Run the Medium data script
+      env:
+        RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+      run: python ersilia-medium.py
+
+    - name: Upload Publications
+      uses: actions/upload-artifact@v2
+      with:
+        name: Publications
+        path: Ersilia Datatables Medium Publication.csv
+
+    - name: Upload Editors
+      uses: actions/upload-artifact@v2
+      with:
+        name: Editors
+        path: Ersilia Datatables Medium Editors.csv
+
+    - name: Upload Articles
+      uses: actions/upload-artifact@v2
+      with:
+        name: Article
+        path: Ersilia Datatables Medium Articles.csv
